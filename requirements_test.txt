@@ -1,0 +1,5 @@
+# Matches Home Assistant 2025.6.3; requires Python 3.13.
+pytest-homeassistant-custom-component==0.13.254
+ruff==0.11.0
+# aiodns 3.x uses the pycares 4.x query result API.
+pycares==4.11.0

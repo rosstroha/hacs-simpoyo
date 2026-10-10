@@ -1,0 +1,26 @@
+# Keep personal captures and credentials private.
+*.har
+*.eml
+config.json
+config.*.json
+!config.example.json
+*cookies*
+.simpoyo-usage*
+last-error.log
+.env
+.env.*
+!.env.example
+.storage/
+
+# Development artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+.bootstrap-venv/
+.bootstrap-tools/
+*.egg-info/
+

@@ -1,0 +1,2 @@
+type: custom:simpoyo-gauges
+entity: sensor.simpoyo_data_used

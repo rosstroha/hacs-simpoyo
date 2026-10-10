@@ -1,0 +1,29 @@
+shell_command:
+  simpoyo_poll: >-
+    SIMPOYO_CONFIG=/config/simpoyo/config.json
+    SIMPOYO_TIME_ZONE=America/Denver
+    python3 /config/simpoyo/simpoyo_usage.py --ha-poll
+
+template:
+  - triggers:
+      - trigger: homeassistant
+        event: start
+      - trigger: time_pattern
+        minutes: "/10"
+    actions:
+      - action: shell_command.simpoyo_poll
+        response_variable: simpoyo_response
+      - variables:
+          simpoyo_payload: "{{ simpoyo_response.stdout | from_json(default={}) }}"
+    sensor:
+      - name: Simpoyo data used
+        unique_id: simpoyo_data_used
+        default_entity_id: sensor.simpoyo_data_used
+        icon: mdi:sim
+        device_class: data_size
+        state_class: measurement
+        unit_of_measurement: GB
+        availability: >-
+          {{ simpoyo_response.returncode == 0 and simpoyo_payload.data_used_gb is defined }}
+        state: "{{ simpoyo_payload.get('data_used_gb', 0) }}"
+        attributes: "{{ simpoyo_payload.get('flat_attributes', {}) }}"
