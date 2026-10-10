@@ -9,7 +9,7 @@
           "gmail_email": "Gmail email",
           "gmail_app_password": "Gmail app password",
           "include_inactive_plans": "Include expired or empty data plans",
-          "auto_add_devices": "Automatically add new SIM devices"
+          "auto_add_devices": "Automatically add new SIM services"
         }
       },
       "reauth_confirm": {
@@ -70,11 +70,11 @@
   "options": {
     "step": {
       "init": {
-        "title": "SIM devices",
-        "description": "Choose which SIM plans to include and whether newly detected SIMs are added automatically. Previously discovered devices remain unavailable when excluded.",
+        "title": "SIM services",
+        "description": "Choose which SIM plans to include and whether newly detected SIMs are added automatically. Previously discovered SIM services remain unavailable when excluded.",
         "data": {
           "include_inactive_plans": "Include expired or empty data plans",
-          "auto_add_devices": "Automatically add new SIM devices"
+          "auto_add_devices": "Automatically add new SIM services"
         }
       }
     }

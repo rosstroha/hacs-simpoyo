@@ -4,7 +4,7 @@
   "codeowners": ["@rosstroha"],
   "config_flow": true,
   "documentation": "https://github.com/rosstroha/hacs-simpoyo",
-  "integration_type": "service",
+  "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/rosstroha/hacs-simpoyo/issues",
   "requirements": [],

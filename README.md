@@ -1,6 +1,6 @@
 # Install Simpoyo Data Usage
 
-Track your current Simpoyo eSIM plans in Home Assistant. The integration checks usage every 10 minutes.
+Track your current Simpoyo SIM plans in Home Assistant. The integration checks usage every 10 minutes.
 
 Use **Home Assistant 2025.3 or later** and a Gmail inbox that receives your Simpoyo login codes.
 Enable Google 2-Step Verification and create an [app password](https://support.google.com/accounts/answer/185833) for that inbox.
@@ -19,9 +19,9 @@ Once the repository is public:
 4. Open **Settings > Devices & services > Add integration > Simpoyo**.
 5. Enter your Simpoyo email, Gmail address, and Gmail app password.
 
-Setup creates one device per SIM, with separate sensors for its plan fields.
+Setup creates one service entry per SIM, with separate sensors for its plan fields.
 **Include expired or empty data plans** is off by default.
-**Automatically add new SIM devices** is on by default.
+**Automatically add new SIM services** is on by default.
 You can change both in the integration's configuration options.
 
 Setup waits for the login email and can take several minutes.

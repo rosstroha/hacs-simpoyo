@@ -1,6 +1,6 @@
 # Add plan gauges
 
-For the native integration, open a SIM device and select its **Data left** sensor in a built-in Gauge card. Set the maximum to that SIM's allowance in GB. Use an Entities card for the SIM name, plan, data used, total data, and valid-until sensors.
+For the native integration, open a SIM service and select its **Data left** sensor in a built-in Gauge card. Set the maximum to that SIM's allowance in GB. Use an Entities card for the SIM name, plan, data used, total data, and valid-until sensors.
 
 Example (replace the entity ID and maximum with your SIM's values):
 

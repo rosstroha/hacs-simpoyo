@@ -1,4 +1,4 @@
-"""Sensors for individual SIMs, identified by ICCID."""
+"""Sensors for individual SIM services, identified by ICCID."""
 
 from datetime import date, datetime
 
@@ -165,7 +165,8 @@ class SimpoyoSensor(CoordinatorEntity[SimpoyoCoordinator], SensorEntity):
             identifiers={(DOMAIN, f"{entry.unique_id}_{iccid}")},
             name=plan.get("name") or f"Simpoyo {iccid}",
             manufacturer="Simpoyo",
-            model="eSIM",
+            model="SIM",
+            entry_type=dr.DeviceEntryType.SERVICE,
             serial_number=iccid,
         )
 

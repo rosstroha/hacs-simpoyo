@@ -61,6 +61,9 @@ async def test_sim_fields_filtering_and_expiry_boundary(
             dr.async_get(hass), account_entry.entry_id
         )
         assert len(devices) == (4 if include else 1)
+        assert all(
+            device.entry_type is dr.DeviceEntryType.SERVICE for device in devices
+        )
         assert len(registered) == len(devices) * len(DESCRIPTIONS)
         by_key = {
             entity.unique_id.removeprefix("user@example.com_active_"): hass.states.get(
@@ -215,3 +218,32 @@ async def test_device_becomes_unavailable_after_final_valid_day(
         await account_entry.runtime_data.async_refresh()
         await hass.async_block_till_done()
     assert all(hass.states.get(eid).state == STATE_UNAVAILABLE for eid in ids)
+
+
+async def test_existing_sim_device_becomes_service_without_changing_identity(
+    hass, account_entry, api_client
+):
+    account_entry.add_to_hass(hass)
+    devices = dr.async_get(hass)
+    original = devices.async_get_or_create(
+        config_entry_id=account_entry.entry_id,
+        identifiers={("simpoyo", "user@example.com_1234567890")},
+        name="Custom SIM",
+    )
+    devices.async_update_device(original.id, name_by_user="My travel SIM")
+    registry = er.async_get(hass)
+    entity = registry.async_get_or_create(
+        "sensor",
+        "simpoyo",
+        "user@example.com_1234567890_data_left",
+        config_entry=account_entry,
+        device_id=original.id,
+        suggested_object_id="my_travel_data",
+    )
+    await setup(hass, account_entry, api_client)
+    updated = devices.async_get(original.id)
+    assert updated.entry_type is dr.DeviceEntryType.SERVICE
+    assert updated.name_by_user == "My travel SIM"
+    assert len(dr.async_entries_for_config_entry(devices, account_entry.entry_id)) == 1
+    assert registry.async_get(entity.entity_id).device_id == original.id
+    assert hass.states.get(entity.entity_id).state == "2.5"
