@@ -4,20 +4,32 @@ from typing import Any
 
 import voluptuous as vol
 from aiohttp import CookieJar
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_EMAIL
+from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.helpers.storage import Store
 
 from .api import SimpoyoAuthError, SimpoyoClient, SimpoyoError
-from .const import CONF_GMAIL_APP_PASSWORD, CONF_GMAIL_EMAIL, DOMAIN
+from .const import (
+    CONF_AUTO_ADD_DEVICES,
+    CONF_GMAIL_APP_PASSWORD,
+    CONF_GMAIL_EMAIL,
+    CONF_INCLUDE_INACTIVE_PLANS,
+    DOMAIN,
+)
 
 
 class SimpoyoConfigFlow(ConfigFlow, domain=DOMAIN):
     """Validate credentials and prevent duplicate account entries."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return SimpoyoOptionsFlow()
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -44,9 +56,17 @@ class SimpoyoConfigFlow(ConfigFlow, domain=DOMAIN):
                     " ", ""
                 ),
             }
-            if not all(data.values()) or any(
-                "@" not in data[key] for key in (CONF_EMAIL, CONF_GMAIL_EMAIL)
-            ):
+            if not reauth:
+                data[CONF_AUTO_ADD_DEVICES] = user_input.get(
+                    CONF_AUTO_ADD_DEVICES, True
+                )
+                data[CONF_INCLUDE_INACTIVE_PLANS] = user_input.get(
+                    CONF_INCLUDE_INACTIVE_PLANS, False
+                )
+            if not all(
+                data[key]
+                for key in (CONF_EMAIL, CONF_GMAIL_EMAIL, CONF_GMAIL_APP_PASSWORD)
+            ) or any("@" not in data[key] for key in (CONF_EMAIL, CONF_GMAIL_EMAIL)):
                 errors["base"] = "invalid_input"
             else:
                 await self.async_set_unique_id(data[CONF_EMAIL])
@@ -99,8 +119,46 @@ class SimpoyoConfigFlow(ConfigFlow, domain=DOMAIN):
                 ),
             }
         )
+        if not reauth:
+            schema = schema.extend(
+                {
+                    vol.Optional(CONF_INCLUDE_INACTIVE_PLANS, default=False): bool,
+                    vol.Optional(CONF_AUTO_ADD_DEVICES, default=True): bool,
+                }
+            )
         return self.async_show_form(
             step_id="reauth_confirm" if reauth else "user",
             data_schema=schema,
             errors=errors,
+        )
+
+
+class SimpoyoOptionsFlow(OptionsFlow):
+    """Choose whether to discover expired and depleted SIM plans."""
+
+    async def async_step_init(self, user_input=None) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_INCLUDE_INACTIVE_PLANS,
+                        default=self.config_entry.options.get(
+                            CONF_INCLUDE_INACTIVE_PLANS,
+                            self.config_entry.data.get(
+                                CONF_INCLUDE_INACTIVE_PLANS, False
+                            ),
+                        ),
+                    ): bool,
+                    vol.Required(
+                        CONF_AUTO_ADD_DEVICES,
+                        default=self.config_entry.options.get(
+                            CONF_AUTO_ADD_DEVICES,
+                            self.config_entry.data.get(CONF_AUTO_ADD_DEVICES, True),
+                        ),
+                    ): bool,
+                }
+            ),
         )

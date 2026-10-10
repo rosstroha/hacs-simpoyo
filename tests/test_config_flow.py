@@ -41,6 +41,8 @@ async def test_user_flow_normalizes_and_creates_entry(hass, api_client):
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"]["email"] == "user@example.com"
     assert result["data"]["gmail_app_password"] == "apppassword"
+    assert result["data"]["auto_add_devices"] is True
+    assert result["data"]["include_inactive_plans"] is False
     api_client.async_close.assert_awaited_once()
 
 
@@ -151,3 +153,43 @@ async def test_flow_session_handoff_survives_setup_and_reload(hass, api_client):
         await Store(hass, 1, f"simpoyo.{entry.entry_id}", private=True).async_load()
         is None
     )
+
+
+async def test_setup_can_include_inactive_plans(hass, api_client):
+    with (
+        patch(
+            "custom_components.simpoyo.config_flow.SimpoyoClient",
+            return_value=api_client,
+        ),
+        patch(
+            "custom_components.simpoyo.async_setup_entry",
+            new=AsyncMock(return_value=True),
+        ),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            "simpoyo",
+            context={"source": "user"},
+            data={**DATA, "include_inactive_plans": True, "auto_add_devices": False},
+        )
+        await hass.async_block_till_done()
+    assert result["data"]["include_inactive_plans"] is True
+    assert result["data"]["auto_add_devices"] is False
+
+
+async def test_options_change_reloads_entry(hass, account_entry):
+    account_entry.add_to_hass(hass)
+    from custom_components.simpoyo import async_reload_entry
+
+    account_entry.async_on_unload(account_entry.add_update_listener(async_reload_entry))
+    with patch(
+        "homeassistant.config_entries.ConfigEntries.async_reload", return_value=True
+    ) as reload:
+        form = await hass.config_entries.options.async_init(account_entry.entry_id)
+        assert form["type"] is FlowResultType.FORM
+        result = await hass.config_entries.options.async_configure(
+            form["flow_id"], {"include_inactive_plans": True}
+        )
+        await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert account_entry.options["include_inactive_plans"] is True
+    reload.assert_awaited_once_with(account_entry.entry_id)

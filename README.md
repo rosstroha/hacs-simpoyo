@@ -19,6 +19,11 @@ Once the repository is public:
 4. Open **Settings > Devices & services > Add integration > Simpoyo**.
 5. Enter your Simpoyo email, Gmail address, and Gmail app password.
 
+Setup creates one device per SIM, with separate sensors for its plan fields.
+**Include expired or empty data plans** is off by default.
+**Automatically add new SIM devices** is on by default.
+You can change both in the integration's configuration options.
+
 Setup waits for the login email and can take several minutes.
 
 ## Install manually

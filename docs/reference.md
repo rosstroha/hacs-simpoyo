@@ -1,23 +1,36 @@
 # Sensor and authentication reference
 
 Simpoyo Data Usage checks all plans on your account every 10 minutes.
-The four sensors summarize plans through their expiry date in your Home Assistant time zone.
-Depleted plans contribute until they expire.
+Each SIM is a device identified by its ICCID. Names and provider ordering do not change device or entity IDs.
+Each device has these sensors:
 
 | Sensor | Value |
 | --- | --- |
-| Data used | Total usage across current plans, in GB |
-| Data left | Remaining data across current plans, in GB |
-| Total data | Total allowance across current plans, in GB |
-| Active plan count | Number of current plans, including depleted plans |
+| ICCID | SIM identifier |
+| SIM name | Name returned by Simpoyo |
+| Plan | Plan description |
+| Data used | SIM usage in GB |
+| Data left | SIM remaining data in GB |
+| Total data | SIM allowance in GB |
+| Valid until | Expiry date, including the final valid day |
+| Status | `ok` after a successful check |
+| Last checked | Timestamp of the account's last successful check |
+| Active plan count | 1 if this SIM's plan is unexpired and has data left, otherwise 0 |
 
-Usage can decrease when plans expire. Home Assistant records these values as measurements.
+Data amounts are measurements and can decrease after a plan change.
+Expiry uses your Home Assistant time zone. Missing or invalid expiry dates are excluded by default.
+Records without an ICCID cannot create a device.
 
-The data-used sensor includes `status`, `checked_at`, and `active_plan_count` attributes.
-Each current plan adds `plan_1_*`, `plan_2_*`, and subsequent numbered attributes.
-Plan fields include `name`, `iccid`, `plan`, `data_left`, `data_used`, `total_data`, and `valid_until`.
+## Device options
 
-Home Assistant can add a suffix to sensor entity IDs when an existing entity uses the same name.
+Set these in the initial setup form or the integration's configuration options:
+
+- **Include expired or empty data plans** defaults to off. Only unexpired plans with remaining data create devices. Enable it to include expired and depleted plans too.
+- **Automatically add new SIM devices** defaults to on. New eligible ICCIDs are added after successful polling. Turn it off to keep updating existing devices without adding new ones, including after a restart. Initial setup still adds all eligible SIMs currently on the account. Reenable it to discover additional SIMs.
+
+Previously discovered devices remain registered but become unavailable when their plan is absent or excluded. This preserves entity IDs, history, and customizations. A returning eligible plan resumes those entities. When automatic discovery is off, enabling the expired-plan option only restores already discovered SIMs; enable automatic discovery to add previously ignored SIMs.
+
+The old account device and aggregate sensors are replaced on upgrade. Update dashboards and automations to use the new device sensors; numbered `plan_1_*` attributes are no longer provided. Home Assistant may add suffixes to entity IDs when names collide.
 
 ## Authentication and storage
 

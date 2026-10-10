@@ -4,21 +4,79 @@
       "user": {
         "title": "Connect Simpoyo",
         "description": "Enter your Simpoyo email, Gmail address, and Gmail app password. Use the Gmail inbox that receives your Simpoyo login codes. Allow several minutes for setup to receive the email.",
-        "data": {"email": "Simpoyo email", "gmail_email": "Gmail email", "gmail_app_password": "Gmail app password"}
+        "data": {
+          "email": "Simpoyo email",
+          "gmail_email": "Gmail email",
+          "gmail_app_password": "Gmail app password",
+          "include_inactive_plans": "Include expired or empty data plans",
+          "auto_add_devices": "Automatically add new SIM devices"
+        }
       },
       "reauth_confirm": {
         "title": "Reconnect Simpoyo",
         "description": "Enter your current Gmail app password for this account. Allow several minutes for setup to receive the login email.",
-        "data": {"email": "Simpoyo email", "gmail_email": "Gmail email", "gmail_app_password": "Gmail app password"}
+        "data": {
+          "email": "Simpoyo email",
+          "gmail_email": "Gmail email",
+          "gmail_app_password": "Gmail app password"
+        }
       }
     },
-    "error": {"invalid_auth": "Simpoyo or Gmail rejected your login. Check your account details and Gmail app password.", "cannot_connect": "The usage check or login email failed. Check your connection and try again.", "invalid_input": "Enter valid email addresses and your Gmail app password."},
-    "abort": {"already_configured": "You have already added this account.", "reauth_successful": "Your login details are updated.", "unique_id_mismatch": "Use your original Simpoyo account email."}
+    "error": {
+      "invalid_auth": "Simpoyo or Gmail rejected your login. Check your account details and Gmail app password.",
+      "cannot_connect": "The usage check or login email failed. Check your connection and try again.",
+      "invalid_input": "Enter valid email addresses and your Gmail app password."
+    },
+    "abort": {
+      "already_configured": "You have already added this account.",
+      "reauth_successful": "Your login details are updated.",
+      "unique_id_mismatch": "Use your original Simpoyo account email."
+    }
   },
-  "entity": {"sensor": {
-    "data_used": {"name": "Data used"},
-    "data_left": {"name": "Data left"},
-    "total_data": {"name": "Total data"},
-    "active_plan_count": {"name": "Active plan count"}
-  }}
+  "entity": {
+    "sensor": {
+      "data_used": {
+        "name": "Data used"
+      },
+      "data_left": {
+        "name": "Data left"
+      },
+      "total_data": {
+        "name": "Total data"
+      },
+      "active_plan_count": {
+        "name": "Active plan count"
+      },
+      "iccid": {
+        "name": "ICCID"
+      },
+      "name": {
+        "name": "SIM name"
+      },
+      "plan": {
+        "name": "Plan"
+      },
+      "valid_until": {
+        "name": "Valid until"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "checked_at": {
+        "name": "Last checked"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SIM devices",
+        "description": "Choose which SIM plans to include and whether newly detected SIMs are added automatically. Previously discovered devices remain unavailable when excluded.",
+        "data": {
+          "include_inactive_plans": "Include expired or empty data plans",
+          "auto_add_devices": "Automatically add new SIM devices"
+        }
+      }
+    }
+  }
 }

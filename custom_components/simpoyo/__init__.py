@@ -37,6 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: SimpoyoConfigEntry) -> b
     except BaseException:
         await client.async_close()
         raise
+    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
 
 
@@ -50,3 +51,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: SimpoyoConfigEntry) -> 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Delete saved authentication when you remove an account."""
     await Store(hass, 1, f"{DOMAIN}.{entry.entry_id}", private=True).async_remove()
+
+
+async def async_reload_entry(hass: HomeAssistant, entry: SimpoyoConfigEntry) -> None:
+    """Apply plan inclusion option changes."""
+    await hass.config_entries.async_reload(entry.entry_id)
