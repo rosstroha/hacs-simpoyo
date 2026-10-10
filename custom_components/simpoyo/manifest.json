@@ -3,10 +3,10 @@
   "name": "Simpoyo",
   "codeowners": ["@rosstroha"],
   "config_flow": true,
-  "documentation": "https://github.com/rosstroha/simpoyo-data-usage",
+  "documentation": "https://github.com/rosstroha/hacs-simpoyo",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/rosstroha/simpoyo-data-usage/issues",
+  "issue_tracker": "https://github.com/rosstroha/hacs-simpoyo/issues",
   "requirements": [],
   "version": "0.1.0"
 }
